@@ -93,6 +93,7 @@ public class BooksToWords {
 }
 #+END_SRC
 
+On peut aussi réaliser ce programme en python :
 
 #+BEGIN_SRC python :exports code :tangle book-to-words :shebang "#!/usr/bin/env python3"
 import sys

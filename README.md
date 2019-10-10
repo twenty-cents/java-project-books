@@ -1,18 +1,18 @@
-- [Contexte](#orgb57cf30)
-- [MVP](#orge7249a8)
-- [Objectif](#org8916660)
-- [Prétraitements](#org0f2daf2)
+- [Contexte](#org2602fda)
+- [MVP](#org067d6e3)
+- [Objectif](#orgeb6e119)
+- [Prétraitements](#org906660d)
 
 
 
-<a id="orgb57cf30"></a>
+<a id="org2602fda"></a>
 
 # Contexte
 
 Le programme doit permettre de travailler sur un ensemble de fichiers texte correspondant à des livres. On voudra pouvoir avoir des informations sur le contenu des ces livres.
 
 
-<a id="orge7249a8"></a>
+<a id="org067d6e3"></a>
 
 # MVP
 
@@ -42,7 +42,7 @@ Le quatrième choix :
 </div>
 
 
-<a id="org8916660"></a>
+<a id="orgeb6e119"></a>
 
 # Objectif
 
@@ -53,7 +53,7 @@ Parmi les informations proposées pour un fichier, ajouter :
 -   Afficher pour chacun des autres fichiers le pourcentage de mots de l'autre fichier qui sont présents dans le fichier sélectionnés, par ordre décroissant de ce pourcentage.
 
 
-<a id="org0f2daf2"></a>
+<a id="org906660d"></a>
 
 # Prétraitements
 
@@ -82,6 +82,8 @@ public class BooksToWords {
     }
 }
 ```
+
+On peut aussi réaliser ce programme en python :
 
 ```python
 import sys
