@@ -350,7 +350,7 @@ que les mots (un par ligne), d'un fichier texte :
 <span style="color: #0000FF;">import</span> <span style="color: #D0372D;">java</span>.<span style="color: #D0372D;">util</span>.<span style="color: #D0372D;">regex</span>.<span style="color: #6434A3;">Matcher</span>;
 <span style="color: #0000FF;">import</span> <span style="color: #D0372D;">java</span>.<span style="color: #D0372D;">util</span>.<span style="color: #D0372D;">regex</span>.<span style="color: #6434A3;">Pattern</span>;
 
-<span style="color: #0000FF;">public</span> <span style="color: #0000FF;">class</span> <span style="color: #6434A3;">BooksToWords</span> {
+<span style="color: #0000FF;">public</span> <span style="color: #0000FF;">class</span> <span style="color: #6434A3;">BookStatistics</span> {
     <span style="color: #0000FF;">public</span> <span style="color: #0000FF;">static</span> <span style="color: #6434A3;">void</span> <span style="color: #006699;">main</span>(<span style="color: #6434A3;">String</span>[] <span style="color: #BA36A5;">args</span>)<span style="color: #0000FF;">throws</span> <span style="color: #6434A3;">FileNotFoundException</span> {
         <span style="color: #6434A3;">Pattern</span> <span style="color: #BA36A5;">p</span> = Pattern.compile(<span style="color: #008000;">"\\w+"</span>, <span style="color: #D0372D;">Pattern</span>.UNICODE_CHARACTER_CLASS);
         <span style="color: #0000FF;">try</span>(<span style="color: #6434A3;">Scanner</span> <span style="color: #BA36A5;">sc</span> = <span style="color: #0000FF;">new</span> <span style="color: #6434A3;">Scanner</span>(<span style="color: #0000FF;">new</span> <span style="color: #6434A3;">File</span>(args[0]));

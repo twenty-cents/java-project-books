@@ -1,0 +1,401 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.*;
+
+public class Menu {
+
+    // Construction de la classe de gestion des statistiques des livres
+    static private BookStatistics bookStatistics;
+    static{
+        bookStatistics = new BookStatistics();
+    }
+    static private Scanner sc;
+    static{
+        sc = new Scanner(System.in);
+    }
+
+    /**
+     * Constructeur
+     * @param books : Liste des fichiers de type livre
+     */
+    public Menu(String[] books){
+        // Contrôle d'existance des fichiers reçus en paramètre
+        // La méthode retourne la liste des fichiers introuvables dans le système
+        List<String> unavailableBooks = bookStatistics.checkFiles(books);
+
+        if(unavailableBooks.size() == 0){
+            // Aucune anomalie dans les paramètres reçus,
+            // Mise à jour de la liste des livres pris en charge
+            for(int i=0; i < books.length; i++){
+                addBook(books[i]);
+            }
+            // Pause
+            pause();
+            // Nettoyage du terminal
+            clear();
+            // exécution du menu général
+            executeMenuMain();
+            // Sortie de l'application
+            exit(0);
+        }
+        else {
+            // Affiche la liste des livres introuvables dans le système
+            displayErrorParams(unavailableBooks);
+            // Sortie de l'application
+            exit(0);
+        }
+    }
+
+    /**
+     * Sortie de l'application
+     * @param status
+     */
+    private void exit(int status){
+        // Nettoyage du répertoire de prétraitements
+        bookStatistics.cleanPreprocessDirectory("");
+        // Sortie de l'application
+        System.exit(status);
+    }
+
+    /**
+     * Ajout d'un livre dans la bibliothèque
+     * @param book
+     */
+    private void addBook(String book){
+        System.out.println("Ajout dans la bibliothèque du fichier " + book + "...en cours...");
+        try {
+            bookStatistics.addBook(book);
+            System.out.println("Ajout dans la bibliothèque du fichier " + book + " ...terminé.");
+        } catch (BookStatisticsException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    /**
+     * Affiche la liste des livres introuvables dans le système
+     * @param unavailableBooks : Liste des livres introuvables dans le système
+     */
+    private void displayErrorParams(List<String> unavailableBooks){
+        addTitleOption("!!! : Anomalie dans les paramètres reçus !!!");
+        System.out.println("Liste des fichiers inexistants dans le système :\n");
+
+        // Récupération et affichage de la liste des livres introuvables dans le système
+        for(String book : unavailableBooks){
+            System.out.println("  - " + book);
+        }
+
+        // Mise en pause
+        this.pause();
+    }
+
+    /**
+     * Affiche le message d'accueil
+     */
+    private void displayMenuMain(){
+        // Ajout du titre du menu d'accueil
+        addTitleOption("Programme de statistiques de bibliothèque");
+        System.out.println("Menu général :\n");
+
+        // Ajout des options
+        addOption(1, "Lister les fichiers");
+        addOption(2, "Ajouter un fichier");
+        addOption(3, "Supprimer un fichier");
+        addOption(4, "Afficher des informations sur un livre");
+        addOption(5, "Quitter le programme");
+    }
+
+    /**
+     * Exécution du menu général
+     */
+    private void executeMenuMain(){
+        boolean oneMore = true;
+
+        while(oneMore){
+            // Affiche le menu général
+            displayMenuMain();
+            // Sélection d'une option
+            int option = selectOption(1, 5, "");
+            // Nettoyage de l'affichage
+            clear();
+
+            // Débranchement vers l'option sélectionnée
+            switch (option){
+                case 1:
+                    executeOptionListCurrentBooks();
+                    break;
+                case 2:
+                    executeOptionAddBook();
+                    break;
+                case 3:
+                    executeOptionRemoveBook();
+                    break;
+                case 4:
+                    executeSubmenuBookInfo();
+                    break;
+                case 5:
+                    oneMore = false;
+                    break;
+                default:
+                    System.out.println("Option non prévue, veuillez contacter le support informatique.");
+            }
+
+            // Nettoyage de l'affichage
+            clear();
+        }
+        System.out.println("Merci, au revoir!");
+    }
+
+    /**
+     * Option 1 - Affiche la liste des livres présents dans la bibliothèque
+     */
+    private void executeOptionListCurrentBooks(){
+        addTitleOption("Option 1 : Lister les fichiers");
+        System.out.println("Liste des livres présents dans la bibliothèque :\n");
+
+        // Récupération et affichage de la liste des livres
+        for(String book : bookStatistics.getBooks()){
+            System.out.println("  - " + book);
+        }
+
+        // Mise en pause
+        this.pause();
+    }
+
+    /**
+     * Option 2 - Ajoute un livre dans la bibliothèque
+     */
+    private String executeOptionAddBook(){
+        addTitleOption("Option 2 : Ajouter un fichier");
+        System.out.println("Liste des livres disponibles :\n");
+
+        int option = -1;
+        String newBook = "";
+
+        // Récupération de la liste des livres disponibles
+        List<File> books = bookStatistics.getAvailableBooks("");
+
+        // La collection doit avoir au moins un livre
+        if(books.size() > 0){
+
+            // Affichage des livres
+            for(int i = 0; i < books.size(); i++){
+                addOption(i+1, books.get(i).getAbsolutePath());
+                //System.out.println("  - (" + Integer.toString(i+1) + ") : " + books.get(i));
+            }
+
+            // Sélection
+            option = selectOption(1, books.size(), "Veuillez saisir le numéro du fichier à ajouter");
+
+            // Ajout du fichier sélectionné dans la collection
+            newBook = books.get(option-1).getAbsolutePath();
+            addBook(books.get(option-1).getAbsolutePath());
+
+            // Message de confirmation
+            System.out.println("Le livre suivant a été ajouté dans la bibliothèque : \n" + newBook);
+
+        } else {
+            System.out.println("\n!!! Désolé, aucun livre à ajouter disponible !!!");
+        }
+
+        // Pause
+        pause();
+
+        return newBook;
+    }
+
+    /**
+     * Option 3 - Supprime un fichier
+     * Supprime un livre de la bibliothèque
+     * @return : nom du fichier supprimé
+     */
+    private String executeOptionRemoveBook(){
+        addTitleOption("Option 3 : Supprimer un fichier");
+        System.out.println("Liste des livres présents dans la bibliothèque :\n");
+
+        int option = -1;
+        String removed = "";
+
+        // Récupéraion de la liste des livres
+        ArrayList<String> books = bookStatistics.getBooks();
+
+        // La collection doit avoir au moins un livre
+        if(books.size() > 0){
+
+            // Affichage des livres
+            for(int i = 0; i < books.size(); i++){
+                addOption(i+1, books.get(i));
+                //System.out.println("  - (" + Integer.toString(i+1) + ") : " + books.get(i));
+            }
+
+            // Sélection
+            option = selectOption(1, books.size(), "Veuillez saisir le numéro du fichier à supprimer");
+
+            // Suppression du livre dans la collection
+            removed = books.get(option-1);
+            bookStatistics.removeBook(books.get(option-1));
+
+            // Message de confirmation
+            System.out.println("\nLe livre suivant a été supprimé de la bibliothèque : \n" + removed);
+
+        } else {
+            System.out.println("\n!!! Désolé, aucun livre à supprimer disponible !!!");
+        }
+
+        // Pause
+        pause();
+
+        return removed;
+    }
+
+    /**
+     * Option 4 - Exécution du sous-menu : Afficher les informations sur un livre
+     */
+    private void executeSubmenuBookInfo(){
+        // Affiche le titre de l'option
+        addTitleOption("Option 4 : Afficher des informations sur un livre");
+        System.out.println("Liste des livres présents dans la bibliothèque :\n");
+
+        int option = -1;
+        String book = "";
+
+        // Récupéraion de la liste des livres
+        ArrayList<String> books = bookStatistics.getBooks();
+
+        // La collection doit avoir au moins un livre
+        if(books.size() > 0){
+
+            // Affichage des livres
+            for(int i = 0; i < books.size(); i++){
+                addOption(i+1, books.get(i));
+            }
+
+            // Sélection
+            option = selectOption(1, books.size(), "Veuillez saisir le numéro du livre à sélectionner");
+
+            // Récupération du livre dans la collection
+            book = books.get(option-1);
+
+            // Nettoyage du terminal
+            clear();
+            // Affiche le titre de l'option
+            addTitleOption("Option 4 : Afficher des informations sur un livre");
+            System.out.println("Livre sélectionné : " + book + "\n");
+
+            System.out.println("Options disponibles :\n");
+
+            // Affiche les sous-options disponibles
+            addOption(1, "Affiche le nombre de lignes du fichier");
+            addOption(2, "Affiche le nombre de mots du fichier");
+            addOption(3, "Affiche les 50 mots les plus fréquents et leur nombre d'occurrences");
+            addOption(4, "Affiche les mots qui sont présents seulement dans ce fichier et aucun des autres fichiers");
+            addOption(5, "Affiche pour chacun des autres fichiers le pourcentage de mots de l'autre fichier qui sont présents dans le fichier sélectionnés, par ordre décroissant de ce pourcentage.");
+            //addOption(6, "Retour au menu précédent\n");
+
+            // Sélectionne une option
+            option = selectOption(1, 5, "");
+
+            switch (option){
+                case 1:
+                    executeOptionBookTotalRows(book);
+                    break;
+                case 2:
+                    executeOptionBookTotalWords(book);
+                    break;
+                case 3:
+                    executeOptionBookWordsFrequency(book);
+                    break;
+                default:
+                    System.out.println("Option non prévue, veuillez contacter le support informatique.");
+            }
+
+        } else {
+            System.out.println("\n!!! Désolé, aucun livre à supprimer disponible !!!");
+        }
+
+        // Pause
+        pause();
+    }
+
+    /**
+     * Option 4.1 - Affiche le nombre de lignes du fichier
+     * @param book : Livre à analyser
+     */
+    private void executeOptionBookTotalRows(String book){
+        int rows = bookStatistics.countBookLines(book);
+        System.out.println("Le livre contient " + rows + " lignes.");
+    }
+
+    /**
+     * Option 4.2 - Affiche le nombre de mots du fichier
+     * @param book : Livre à analyser
+     */
+    private void executeOptionBookTotalWords(String book){
+        int words = bookStatistics.countBookWords(book);
+        System.out.println("Le livre contient " + words + " mots.");
+    }
+
+    private void executeOptionBookWordsFrequency(String book){
+        try {
+            Map<String, Integer> top50 = bookStatistics.getWordsFrequency(book, 50);
+            for (Iterator i = top50.entrySet().iterator(); i.hasNext();) {
+                Map.Entry<String, Integer> e = (Map.Entry<String, Integer>) i.next();
+                System.out.println( e.getKey() + " : " + e.getValue());
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    /**
+     * Saisie d'une option utilisateur
+     * @param min
+     * @param max
+     * @param msg
+     * @return
+     */
+    private int selectOption(int min, int max, String msg){
+        int option = -1;
+
+        // Message par défaut
+        if(msg.compareTo("") == 0)
+            msg = "Veuillez choisir une option";
+
+        do{
+            try {
+                System.out.print("\n>>> " + msg + " : ");
+                option = Integer.parseInt(sc.nextLine());
+                if(option < min || option > max)
+                    throw new Exception("");
+            } catch (Exception e) {
+                System.out.println("Saisie incorrecte, veuillez ôter vos mouffles...");
+                option = -1;
+            }
+        }while (option == -1);
+
+        return option;
+    }
+
+    private void addTitleOption(String title){
+        System.out.println("--------------------------------------------------------------------------------------------");
+        System.out.println(title);
+        System.out.println("--------------------------------------------------------------------------------------------");
+    }
+
+    private void addOption(int optNumber, String optLabel){
+        System.out.println("(" + optNumber + ") " + optLabel);
+    }
+
+    /**
+     * Mise en pause l'application
+     */
+    private void pause(){
+        System.out.println("\n>>> Appuyez sur <Entrée> pour continuer...");
+        sc.nextLine();
+    }
+
+    private void clear(){
+        System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+    }
+
+}

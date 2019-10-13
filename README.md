@@ -68,7 +68,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class BooksToWords {
+public class BookStatistics {
     public static void main(String[] args)throws FileNotFoundException {
         Pattern p = Pattern.compile("\\w+", Pattern.UNICODE_CHARACTER_CLASS);
         try(Scanner sc = new Scanner(new File(args[0]));
