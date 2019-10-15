@@ -153,8 +153,8 @@ public class Menu {
         System.out.println("Liste des livres présents dans la bibliothèque :\n");
 
         // Récupération et affichage de la liste des livres
-        for(String book : bookStatistics.getBooks()){
-            System.out.println("  - " + book);
+        for(Book book : bookStatistics.getBooks()){
+            System.out.println("  - " + book.getBookName());
         }
 
         // Mise en pause
@@ -172,7 +172,12 @@ public class Menu {
         String newBook = "";
 
         // Récupération de la liste des livres disponibles
-        List<File> books = bookStatistics.getAvailableBooks("");
+        List<File> books = null;
+        try {
+            books = bookStatistics.getAvailableBooks("./books/");
+        } catch (BookStatisticsException e) {
+            e.printStackTrace();
+        }
 
         // La collection doit avoir au moins un livre
         if(books.size() > 0){
@@ -191,7 +196,7 @@ public class Menu {
             addBook(books.get(option-1).getAbsolutePath());
 
             // Message de confirmation
-            System.out.println("Le livre suivant a été ajouté dans la bibliothèque : \n" + newBook);
+            System.out.println("Le livre suivant a été ajouté dans la bibliothèque : \n" + books.get(option-1).getName());
 
         } else {
             System.out.println("\n!!! Désolé, aucun livre à ajouter disponible !!!");
@@ -216,14 +221,14 @@ public class Menu {
         String removed = "";
 
         // Récupéraion de la liste des livres
-        ArrayList<String> books = bookStatistics.getBooks();
+        ArrayList<Book> books = bookStatistics.getBooks();
 
         // La collection doit avoir au moins un livre
         if(books.size() > 0){
 
             // Affichage des livres
             for(int i = 0; i < books.size(); i++){
-                addOption(i+1, books.get(i));
+                addOption(i+1, books.get(i).getBookName());
                 //System.out.println("  - (" + Integer.toString(i+1) + ") : " + books.get(i));
             }
 
@@ -231,7 +236,7 @@ public class Menu {
             option = selectOption(1, books.size(), "Veuillez saisir le numéro du fichier à supprimer");
 
             // Suppression du livre dans la collection
-            removed = books.get(option-1);
+            removed = books.get(option-1).getBookName();
             bookStatistics.removeBook(books.get(option-1));
 
             // Message de confirmation
@@ -256,17 +261,17 @@ public class Menu {
         System.out.println("Liste des livres présents dans la bibliothèque :\n");
 
         int option = -1;
-        String book = "";
+        Book book = null;
 
         // Récupéraion de la liste des livres
-        ArrayList<String> books = bookStatistics.getBooks();
+        ArrayList<Book> books = bookStatistics.getBooks();
 
         // La collection doit avoir au moins un livre
         if(books.size() > 0){
 
             // Affichage des livres
             for(int i = 0; i < books.size(); i++){
-                addOption(i+1, books.get(i));
+                addOption(i+1, books.get(i).getBookName());
             }
 
             // Sélection
@@ -279,7 +284,7 @@ public class Menu {
             clear();
             // Affiche le titre de l'option
             addTitleOption("Option 4 : Afficher des informations sur un livre");
-            System.out.println("Livre sélectionné : " + book + "\n");
+            System.out.println("Livre sélectionné : " + book.getBookName() + "\n");
 
             System.out.println("Options disponibles :\n");
 
@@ -304,6 +309,9 @@ public class Menu {
                 case 3:
                     executeOptionBookWordsFrequency(book);
                     break;
+                case 4:
+                    executeOptionBookWordsUnique(book);
+                    break;
                 default:
                     System.out.println("Option non prévue, veuillez contacter le support informatique.");
             }
@@ -320,29 +328,57 @@ public class Menu {
      * Option 4.1 - Affiche le nombre de lignes du fichier
      * @param book : Livre à analyser
      */
-    private void executeOptionBookTotalRows(String book){
-        int rows = bookStatistics.countBookLines(book);
-        System.out.println("Le livre contient " + rows + " lignes.");
+    private void executeOptionBookTotalRows(Book book){
+        System.out.println("Le livre contient " + book.getLinesCount() + " lignes.");
     }
 
     /**
      * Option 4.2 - Affiche le nombre de mots du fichier
      * @param book : Livre à analyser
      */
-    private void executeOptionBookTotalWords(String book){
-        int words = bookStatistics.countBookWords(book);
-        System.out.println("Le livre contient " + words + " mots.");
+    private void executeOptionBookTotalWords(Book book){
+        System.out.println("Le livre contient " + book.getWordsCount() + " mots.");
     }
 
-    private void executeOptionBookWordsFrequency(String book){
+    /**
+     * Option 4.4 - Affiche les mots qui sont présents seulement dans ce fichier et aucun des autres fichiers
+     * @param book
+     */
+    private void executeOptionBookWordsUnique(Book book){
         try {
-            Map<String, Integer> top50 = bookStatistics.getWordsFrequency(book, 50);
-            for (Iterator i = top50.entrySet().iterator(); i.hasNext();) {
-                Map.Entry<String, Integer> e = (Map.Entry<String, Integer>) i.next();
-                System.out.println( e.getKey() + " : " + e.getValue());
+            Set<String> uniqueWords = bookStatistics.getBookUniqueWords(book);
+
+            System.out.println("\nListe des mots uniques à ce livre : " + uniqueWords.size() + " mot(s)\n");
+
+            String words = "";
+            for(String word : uniqueWords){
+                if(words.equals(""))
+                    words += word;
+                else
+                    words += ", " + word;
             }
+            // Liste finale
+            System.out.print(words);
+
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+        }
+
+    }
+
+    /**
+     * Option 4.3 - Affiche les 50 mots les plus fréquents et leur nombre d'occurrences
+     * @param book : Livre à analyser
+     */
+    private void executeOptionBookWordsFrequency(Book book){
+        int scope = 50;
+        try {
+            Set<Map.Entry<String, Integer>> top50 = bookStatistics.getWordsFrequency(book, scope);
+            for(Map.Entry<String, Integer> mapping : top50){
+                System.out.println(mapping.getKey() + " ==> " + mapping.getValue());
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("\n!!! " + e.getMessage());
         }
 
     }

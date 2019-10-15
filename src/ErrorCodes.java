@@ -1,5 +1,6 @@
 public enum ErrorCodes {
-    VALIDATION_PARSE_ERROR(422);
+    CANNONICAL_PATH_RESOLVE_ERROR(001),
+    PREPROCESS_FILE_ERROR(002);
 
     private int code;
 
