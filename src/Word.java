@@ -10,25 +10,20 @@ public class Word implements Comparable<Word> {
 
     @Override
     public int compareTo(Word o) {
-        if(this.count > o.count)
-            return -1;
-        else if(this.count < o.count)
+        if(this.count < o.count)
             return 1;
+        else if(this.count > o.count)
+            return -1;
         else
             return 0;
     }
 
-    @Override
-    public boolean equals(Object object)
-    {
-        boolean sameSame = false;
-
-        if (object != null && object instanceof Word)
-        {
-            sameSame = this.word == ((Word) object).word;
+    public boolean equals(Object other){
+        if(other != null && (other instanceof Word)){
+            Word otherWord = (Word) other;
+            return this.word.compareTo(otherWord.getWord()) == 0;
         }
-
-        return sameSame;
+        return false;
     }
 
     public String getWord() {

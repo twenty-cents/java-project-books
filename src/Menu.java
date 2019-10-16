@@ -294,10 +294,10 @@ public class Menu {
             addOption(3, "Affiche les 50 mots les plus fréquents et leur nombre d'occurrences");
             addOption(4, "Affiche les mots qui sont présents seulement dans ce fichier et aucun des autres fichiers");
             addOption(5, "Affiche pour chacun des autres fichiers le pourcentage de mots de l'autre fichier qui sont présents dans le fichier sélectionnés, par ordre décroissant de ce pourcentage.");
-            //addOption(6, "Retour au menu précédent\n");
+            addOption(6, "Affiche le nombre de mots unique du fichier\n");
 
             // Sélectionne une option
-            option = selectOption(1, 5, "");
+            option = selectOption(1, 6, "");
 
             switch (option){
                 case 1:
@@ -311,6 +311,12 @@ public class Menu {
                     break;
                 case 4:
                     executeOptionBookWordsUnique(book);
+                    break;
+                case 5:
+                    executeOptionBooksWordUseInAllBooks(book);
+                    break;
+                case 6:
+                    executeOptionWordsUniqueInCurrentBook(book);
                     break;
                 default:
                     System.out.println("Option non prévue, veuillez contacter le support informatique.");
@@ -329,7 +335,7 @@ public class Menu {
      * @param book : Livre à analyser
      */
     private void executeOptionBookTotalRows(Book book){
-        System.out.println("Le livre contient " + book.getLinesCount() + " lignes.");
+        System.out.println("Le livre contient " + book.getLinesCount() + " lignes. ( ==> " + book.getBookName() + " )\n");
     }
 
     /**
@@ -337,7 +343,15 @@ public class Menu {
      * @param book : Livre à analyser
      */
     private void executeOptionBookTotalWords(Book book){
-        System.out.println("Le livre contient " + book.getWordsCount() + " mots.");
+        System.out.println("Le livre contient " + book.getWordsCount() + " mots. ( ==> " + book.getBookName() + " )\n");
+    }
+
+    /**
+     * Option 4.6 - Affiche leSystem.out.println("\nListe des 50 mots les plus fréquents dans le livre courant ( ==> " + book.getBookName() + " )\n");s mots différents d'un livre
+     * @param book
+     */
+    private void executeOptionWordsUniqueInCurrentBook(Book book){
+        System.out.println("Le livre contient " + book.getUniqueWords() + " mots différents. ( ==> " + book.getBookName() + " )\n");
     }
 
     /**
@@ -346,9 +360,9 @@ public class Menu {
      */
     private void executeOptionBookWordsUnique(Book book){
         try {
-            Set<String> uniqueWords = bookStatistics.getBookUniqueWords(book);
+            Set<String> uniqueWords = bookStatistics.getBookUniqueWordsInAllBooks(book);
 
-            System.out.println("\nListe des mots uniques à ce livre : " + uniqueWords.size() + " mot(s)\n");
+            System.out.println("\nListe des mots uniques à ce livre : " + uniqueWords.size() + " mot(s) ( ==> " + book.getBookName() + " )\n");
 
             String words = "";
             for(String word : uniqueWords){
@@ -371,16 +385,43 @@ public class Menu {
      * @param book : Livre à analyser
      */
     private void executeOptionBookWordsFrequency(Book book){
+        System.out.println("\nListe des 50 mots les plus fréquents dans le livre courant ( ==> " + book.getBookName() + " )\n");
         int scope = 50;
         try {
-            Set<Map.Entry<String, Integer>> top50 = bookStatistics.getWordsFrequency(book, scope);
-            for(Map.Entry<String, Integer> mapping : top50){
-                System.out.println(mapping.getKey() + " ==> " + mapping.getValue());
+            String s = "";
+            // Extraction des n mots les plus utilisés
+            List<Word> words = bookStatistics.getWordsFrequency(book, scope);
+
+            // Affichage des résultats
+            for(Word word : words){
+                if(s.equals(""))
+                    s += word.getWord() + " (" + word.getCount() + ")";
+                else
+                    s += ", " + word.getWord() + " (" + word.getCount() + ")";
             }
+
+            System.out.println(s);
         } catch (FileNotFoundException e) {
-            System.out.println("\n!!! " + e.getMessage());
+            System.out.println("\n!!! Anomalie lors du traitement de comptage : " + e.getMessage());
         }
 
+    }
+
+    /**
+     * Option 4.5 - Affiche pour chacun des autres fichiers le pourcentage de mots de l'autre fichier
+     * qui sont présents dans le fichier sélectionnés, par ordre décroissant de ce pourcentage
+     * @param book
+     */
+    private void executeOptionBooksWordUseInAllBooks(Book book){
+        System.out.println("\nTaux d'utilisation des mots du livre courant ( ==> " + book.getBookName() + " ) dans les autres livres de la bibliothèque :\n");
+
+        // Exécution de la demande par la classe business
+        List<WordUsed> wordsUsed = bookStatistics.getBooksWordUseInAllBooksV2(book);
+
+        // Boucle d'affichage des résultats
+        for(WordUsed wordUsedInBook : wordsUsed){
+            System.out.println(wordUsedInBook.getUsedPercent() + " %" + " ==> " + wordUsedInBook.getWord());
+        }
     }
 
     /**

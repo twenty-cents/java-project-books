@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Book implements Comparable<Book>{
@@ -6,20 +7,22 @@ public class Book implements Comparable<Book>{
     private String absoluteFilename = "";
     private String preprocessedBookAbsoluteFilename = "";
     private HashMap<String, Integer> mapMots;
-    private String uniqueMots;
+    private ArrayList<String> lUniqueWords;
     private long wordsCount = 0;
     private long linesCount = 0;
+    private long uniqueWords = 0;
 
     /**
      * Constructeur
      * @param bookName
      */
-    public Book(String bookName, String absoluteFilename, String preprocessedBookAbsoluteFilename, long linesCount, long wordsCount){
+    public Book(String bookName, String absoluteFilename, String preprocessedBookAbsoluteFilename, long linesCount, long wordsCount, long uniqueWords){
         this.bookName = bookName;
         this.absoluteFilename = absoluteFilename;
         this.preprocessedBookAbsoluteFilename = preprocessedBookAbsoluteFilename;
         this.linesCount = linesCount;
         this.wordsCount = wordsCount;
+        this.uniqueWords = uniqueWords;
     }
 
     public String getBookName() {
@@ -70,12 +73,20 @@ public class Book implements Comparable<Book>{
         this.linesCount = linesCount;
     }
 
-    public String getUniqueMots() {
-        return uniqueMots;
+    public long getUniqueWords() {
+        return uniqueWords;
     }
 
-    public void setUniqueMots(String uniqueMots) {
-        this.uniqueMots = uniqueMots;
+    public void setUniqueWords(long uniqueWords) {
+        this.uniqueWords = uniqueWords;
+    }
+
+    public ArrayList<String> getlUniqueWords() {
+        return lUniqueWords;
+    }
+
+    public void setlUniqueWords(ArrayList<String> lUniqueWords) {
+        this.lUniqueWords = lUniqueWords;
     }
 
     /**
