@@ -248,7 +248,7 @@ public class BookStatistics {
     public boolean cleanPreprocessDirectory(String preprocessDirectory) {
         // Valeur par défaut
         if (preprocessDirectory.compareTo("") == 0)
-            preprocessDirectory = "./preprocess/";
+            preprocessDirectory = BookStatistics.PREPROCESS_DIRECTORY;
 
         // code retour
         boolean hasDeleted = true;
@@ -258,7 +258,8 @@ public class BookStatistics {
         File[] allContents = new File(preprocessDirectory).listFiles();
         if (allContents != null) {
             for (File file : allContents) {
-                hasDeleted = file.delete();
+                if(file.getName().compareTo(".trackme") != 0)
+                    hasDeleted = file.delete();
             }
         }
 
