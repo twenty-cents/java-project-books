@@ -8,6 +8,11 @@ public class Word implements Comparable<Word> {
         this.count = count;
     }
 
+    /**
+     * Tri par comptage décroissant
+     * @param o
+     * @return
+     */
     @Override
     public int compareTo(Word o) {
         if(this.count < o.count)
@@ -18,6 +23,10 @@ public class Word implements Comparable<Word> {
             return 0;
     }
 
+    @Override
+    /**
+     * Teste l'égalité de l'objet sur son mot
+     */
     public boolean equals(Object other){
         if(other != null && (other instanceof Word)){
             Word otherWord = (Word) other;

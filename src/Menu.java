@@ -23,24 +23,31 @@ public class Menu {
         // La méthode retourne la liste des fichiers introuvables dans le système
         List<String> unavailableBooks = bookStatistics.checkFiles(books);
 
+        // Aucune anomalie relevée sur les arguments reçus (livres)
+        // -> Exécution du menu général
         if(unavailableBooks.size() == 0){
-            // Aucune anomalie dans les paramètres reçus,
+
             // Mise à jour de la liste des livres pris en charge
             for(int i=0; i < books.length; i++){
                 addBook(books[i]);
             }
-            // Pause
+
+            // Pause utilisateur
             pause();
-            // Nettoyage du terminal
+
+            // Pseudo Nettoyage du terminal
             clear();
+
             // exécution du menu général
             executeMenuMain();
+
             // Sortie de l'application
             exit(0);
         }
         else {
             // Affiche la liste des livres introuvables dans le système
             displayErrorParams(unavailableBooks);
+
             // Sortie de l'application
             exit(0);
         }
@@ -53,20 +60,29 @@ public class Menu {
     private void exit(int status){
         // Nettoyage du répertoire de prétraitements
         bookStatistics.cleanPreprocessDirectory("");
+
         // Sortie de l'application
         System.exit(status);
     }
 
     /**
      * Ajout d'un livre dans la bibliothèque
-     * @param book
+     * @param book : livre à ajouter
      */
     private void addBook(String book){
+
+        // Message à caractère informatif
         System.out.println("Ajout dans la bibliothèque du fichier " + book + "...en cours...");
         try {
+            // Ajout du livre
             bookStatistics.addBook(book);
+
+            // Message à caractère informatif
             System.out.println("Ajout dans la bibliothèque du fichier " + book + " ...terminé.");
+
         } catch (BookStatisticsException e) {
+
+            // Affichage du message d'erreur
             System.out.println(e.getMessage());
         }
     }
@@ -76,6 +92,8 @@ public class Menu {
      * @param unavailableBooks : Liste des livres introuvables dans le système
      */
     private void displayErrorParams(List<String> unavailableBooks){
+
+        // // Message à caractère informatif
         addTitleOption("!!! : Anomalie dans les paramètres reçus !!!");
         System.out.println("Liste des fichiers inexistants dans le système :\n");
 
@@ -92,6 +110,7 @@ public class Menu {
      * Affiche le message d'accueil
      */
     private void displayMenuMain(){
+
         // Ajout du titre du menu d'accueil
         addTitleOption("Programme de statistiques de bibliothèque");
         System.out.println("Menu général :\n");
@@ -111,10 +130,13 @@ public class Menu {
         boolean oneMore = true;
 
         while(oneMore){
+
             // Affiche le menu général
             displayMenuMain();
+
             // Sélection d'une option
             int option = selectOption(1, 5, "");
+
             // Nettoyage de l'affichage
             clear();
 
@@ -149,6 +171,8 @@ public class Menu {
      * Option 1 - Affiche la liste des livres présents dans la bibliothèque
      */
     private void executeOptionListCurrentBooks(){
+
+        // Message à caractère informatif
         addTitleOption("Option 1 : Lister les fichiers");
         System.out.println("Liste des livres présents dans la bibliothèque :\n");
 
@@ -163,8 +187,11 @@ public class Menu {
 
     /**
      * Option 2 - Ajoute un livre dans la bibliothèque
+     * @return : Nom du livre ajouté (TODO : retourner l'objet Book serait mieux)
      */
     private String executeOptionAddBook(){
+
+        // Message à caractère informatif
         addTitleOption("Option 2 : Ajouter un fichier");
         System.out.println("Liste des livres disponibles :\n");
 
@@ -176,7 +203,8 @@ public class Menu {
         try {
             books = bookStatistics.getAvailableBooks("./books/");
         } catch (BookStatisticsException e) {
-            e.printStackTrace();
+            // Message à caractère informatif
+            System.out.println(e.getMessage());
         }
 
         // La collection doit avoir au moins un livre
@@ -214,6 +242,8 @@ public class Menu {
      * @return : nom du fichier supprimé
      */
     private String executeOptionRemoveBook(){
+
+        // Message à caractère informatif
         addTitleOption("Option 3 : Supprimer un fichier");
         System.out.println("Liste des livres présents dans la bibliothèque :\n");
 
@@ -254,8 +284,12 @@ public class Menu {
 
     /**
      * Option 4 - Exécution du sous-menu : Afficher les informations sur un livre
+     * TODO : Méthode trop longue :
+     * TODO   - l'affichage des livres est commun à une autre option
+     * TODO   - L'affichae du sous menu et la sélection des options pourrait être découpé en deux méthodes distinctes
      */
     private void executeSubmenuBookInfo(){
+
         // Affiche le titre de l'option
         addTitleOption("Option 4 : Afficher des informations sur un livre");
         System.out.println("Liste des livres présents dans la bibliothèque :\n");
@@ -280,54 +314,64 @@ public class Menu {
             // Récupération du livre dans la collection
             book = books.get(option-1);
 
-            // Nettoyage du terminal
-            clear();
-            // Affiche le titre de l'option
-            addTitleOption("Option 4 : Afficher des informations sur un livre");
-            System.out.println("Livre sélectionné : " + book.getBookName() + "\n");
+            boolean oneMore = true;
 
-            System.out.println("Options disponibles :\n");
+            while(oneMore){
 
-            // Affiche les sous-options disponibles
-            addOption(1, "Affiche le nombre de lignes du fichier");
-            addOption(2, "Affiche le nombre de mots du fichier");
-            addOption(3, "Affiche les 50 mots les plus fréquents et leur nombre d'occurrences");
-            addOption(4, "Affiche les mots qui sont présents seulement dans ce fichier et aucun des autres fichiers");
-            addOption(5, "Affiche pour chacun des autres fichiers le pourcentage de mots de l'autre fichier qui sont présents dans le fichier sélectionnés, par ordre décroissant de ce pourcentage.");
-            addOption(6, "Affiche le nombre de mots unique du fichier\n");
+                // Nettoyage du terminal
+                clear();
+                // Affiche le titre de l'option
+                addTitleOption("Option 4 : Afficher des informations sur un livre");
+                System.out.println("Livre sélectionné : " + book.getBookName() + "\n");
 
-            // Sélectionne une option
-            option = selectOption(1, 6, "");
+                System.out.println("Options disponibles :\n");
 
-            switch (option){
-                case 1:
-                    executeOptionBookTotalRows(book);
-                    break;
-                case 2:
-                    executeOptionBookTotalWords(book);
-                    break;
-                case 3:
-                    executeOptionBookWordsFrequency(book);
-                    break;
-                case 4:
-                    executeOptionBookWordsUnique(book);
-                    break;
-                case 5:
-                    executeOptionBooksWordUseInAllBooks(book);
-                    break;
-                case 6:
-                    executeOptionWordsUniqueInCurrentBook(book);
-                    break;
-                default:
-                    System.out.println("Option non prévue, veuillez contacter le support informatique.");
+                // Affiche les sous-options disponibles
+                addOption(1, "Affiche le nombre de lignes du fichier");
+                addOption(2, "Affiche le nombre de mots du fichier");
+                addOption(3, "Affiche les 50 mots les plus fréquents et leur nombre d'occurrences");
+                addOption(4, "Affiche les mots qui sont présents seulement dans ce fichier et aucun des autres fichiers");
+                addOption(5, "Affiche pour chacun des autres fichiers le pourcentage de mots de l'autre fichier qui sont présents dans le fichier sélectionnés, par ordre décroissant de ce pourcentage.");
+                addOption(6, "Affiche le nombre de mots unique du fichier\n");
+                addOption(7, "Retour au menu précédent");
+
+                // Sélectionne une option
+                option = selectOption(1, 7, "");
+
+                switch (option){
+                    case 1:
+                        executeOptionBookTotalRows(book);
+                        break;
+                    case 2:
+                        executeOptionBookTotalWords(book);
+                        break;
+                    case 3:
+                        executeOptionBookWordsFrequency(book);
+                        break;
+                    case 4:
+                        executeOptionBookWordsUnique(book);
+                        break;
+                    case 5:
+                        executeOptionBooksWordUseInAllBooks(book);
+                        break;
+                    case 6:
+                        executeOptionWordsUniqueInCurrentBook(book);
+                        break;
+                    case 7:
+                        oneMore = false;
+                        break;
+                    default:
+                        System.out.println("Option non prévue, veuillez contacter le support informatique.");
+                }
+
+                // Pause
+                pause();
             }
 
         } else {
             System.out.println("\n!!! Désolé, aucun livre à supprimer disponible !!!");
         }
 
-        // Pause
-        pause();
     }
 
     /**
@@ -335,6 +379,7 @@ public class Menu {
      * @param book : Livre à analyser
      */
     private void executeOptionBookTotalRows(Book book){
+        // Message à caractère informatif
         System.out.println("Le livre contient " + book.getLinesCount() + " lignes. ( ==> " + book.getBookName() + " )\n");
     }
 
@@ -343,6 +388,7 @@ public class Menu {
      * @param book : Livre à analyser
      */
     private void executeOptionBookTotalWords(Book book){
+        // Message à caractère informatif
         System.out.println("Le livre contient " + book.getWordsCount() + " mots. ( ==> " + book.getBookName() + " )\n");
     }
 
@@ -351,6 +397,7 @@ public class Menu {
      * @param book
      */
     private void executeOptionWordsUniqueInCurrentBook(Book book){
+        // Message à caractère informatif
         System.out.println("Le livre contient " + book.getUniqueWords() + " mots différents. ( ==> " + book.getBookName() + " )\n");
     }
 
@@ -426,10 +473,11 @@ public class Menu {
 
     /**
      * Saisie d'une option utilisateur
-     * @param min
-     * @param max
-     * @param msg
-     * @return
+     *
+     * @param min : indice option minimum sélectionnable
+     * @param max : indice option maximum sélectionnable
+     * @param msg : message de saisie à afficher (optionnel)
+     * @return    : n° option sélectionnée
      */
     private int selectOption(int min, int max, String msg){
         int option = -1;
@@ -453,12 +501,21 @@ public class Menu {
         return option;
     }
 
+    /**
+     * Affiche un titre de menu
+     * @param title : titre à afficher
+     */
     private void addTitleOption(String title){
         System.out.println("--------------------------------------------------------------------------------------------");
         System.out.println(title);
         System.out.println("--------------------------------------------------------------------------------------------");
     }
 
+    /**
+     * Affiche une option de menu
+     * @param optNumber : indice option à afficher
+     * @param optLabel  : libellé option à afficher
+     */
     private void addOption(int optNumber, String optLabel){
         System.out.println("(" + optNumber + ") " + optLabel);
     }
@@ -471,8 +528,15 @@ public class Menu {
         sc.nextLine();
     }
 
+    /**
+     * Effectue plusieurs retours chariot pour simuler un nettoyage du terminal
+     *
+     * NOTA : pas d'appel de commande directe dans le terminal (clear pour linux ou cls pour windows)
+     * car cela obligerait à tester le système d'exploitation pour déterminer quelle commande
+     * lancer, et nuirait à la portabilité du code.
+     */
     private void clear(){
-        System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+        System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
     }
 
 }

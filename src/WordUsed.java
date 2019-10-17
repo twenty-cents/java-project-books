@@ -34,7 +34,11 @@ public class WordUsed implements Comparable<WordUsed> {
         this.usedPercent = usedPercent;
     }
 
-
+    /**
+     * Tri par pourcentage décroissant
+     * @param wordUsed
+     * @return
+     */
     @Override
     public int compareTo(WordUsed wordUsed) {
         int res = 0;

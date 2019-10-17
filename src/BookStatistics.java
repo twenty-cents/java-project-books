@@ -25,10 +25,12 @@ public class BookStatistics {
 
     /**
      * Contrôle si les fichiers reçus existent bien dans le système
+     *
      * @param filenames : Tableau des fichiers à contrôler
      * @return          : Liste des fichiers inexistants dans le système
      */
     public List<String> checkFiles(String[] filenames){
+
         // Liste des livres indisponibles
         List<String> unavailableBooks = new ArrayList<String>();
 
@@ -43,11 +45,13 @@ public class BookStatistics {
 
     /**
      * Ajout d'un livre dans la bibliothèque
+     *
      * @param filename : Livre à ajouter
      * @throws BookStatisticsException
      */
     public void addBook(String filename) throws BookStatisticsException {
-        // Chemin cannonical
+
+        // Chemin cannonical (car plus complet que le chemin absolu
         File f = new File(filename);
         String cannonicalPath;
         try {
@@ -60,15 +64,19 @@ public class BookStatistics {
         String preprocessedBook = PREPROCESS_DIRECTORY + f.getName();
         Map<String, Long> bookCounts = convertBookToWords(filename, preprocessedBook);
 
-        // Ajout du livre dans la bibliothèque
+        // Construction d'un livre
         Book book = new Book(f.getName(), cannonicalPath, preprocessedBook, bookCounts.get("lines"), bookCounts.get("words"), bookCounts.get("uniqueWords"));
+
+        // Ajout du livre dans la bibliothèque
         books.add(book);
 
-        // Comptage des couples mots / utilisation
         try {
+            // Comptage des couples mots / utilisation
             book.setMapMots(getBookWordUses(book.getPreprocessedBookAbsoluteFilename()));
+
             // Récupération de la liste des mots unique du livre
             book.setlUniqueWords(getBookUniqueWords(book));
+
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -78,11 +86,15 @@ public class BookStatistics {
     }
 
     /**
-     * TODO
-     * @param f
+     * Suppression d'un livre de la bibliothèque
+     *
+     * @param f : Livre à supprimer
      */
     public void removeBook(Book f){
+
+        // Suppression du livre
         books.remove(f);
+
         // Tri des livres par ordre alphabétique
         Collections.sort(books);
     }
@@ -90,13 +102,11 @@ public class BookStatistics {
     /**
      * Récupère la liste des livres disponibles à la racine du répertoire reçu ainsi
      * que dans tous ses sous-répertoires
-     * @param bookDirectory
-     * @return
+     *
+     * @param bookDirectory : Répertoire de base contenant les livres de la bibliothèque
+     * @return              : liste des fichiers livre identifiés
      */
     public List<File> getAvailableBooks(String bookDirectory) throws BookStatisticsException {
-        // Valeur par défaut
-//        if (bookDirectory.compareTo("") == 0)
-//            bookDirectory = "./books/";
 
         // Récupération de la liste des livres disponibles par
         // appel récursif de la méthode parseBookDir(), qui renvoie la
@@ -119,8 +129,8 @@ public class BookStatistics {
      * Nota : cette méthode est récursive et s'auto appelle
      * pour chaque sous-répertoire trouvé.
      *
-     * @param bookDirectory
-     * @return
+     * @param bookDirectory : répertoire à analyser
+     * @return              : liste des livres identifiés dans le répertoire
      */
     private List<File> parseBookDirs(String bookDirectory, List<File> files) throws IOException {
         // Création de l'objet File pour le répertoire reçu
@@ -130,8 +140,10 @@ public class BookStatistics {
         File[] fList = directory.listFiles();
         if(fList != null)
             for (File file : fList) {
+
                 // Si le fichier n'est pas un répertoire, on considère qu'il s'agit d'un livre
                 if (file.isFile()) {
+
                     // Le fichier ne doit pas être déjà dans la liste des livres
                     boolean isBookExist = false;
                     for(Book book : books){
@@ -152,9 +164,13 @@ public class BookStatistics {
 
     /**
      * Extrait le contenu d'un livre au format un mot par ligne
-     * @param in
-     * @param out
-     * @return
+     *
+     * @param in  : nom du livre à extraire
+     * @param out : nom du livre de mots à créer
+     * @return    : map avec :
+     *              - le nombre de lignes du livre
+     *              - Le nombre mots du livre
+     *              - Le nombre de mots uniques du livre
      * @throws BookStatisticsException
      */
     public Map<String, Long> convertBookToWords(String in, String out) throws BookStatisticsException {
@@ -171,7 +187,10 @@ public class BookStatistics {
                 for (Matcher m1 = p.matcher(sc.nextLine()); m1.find(); ) {
                     String s = m1.group().toLowerCase();
                     fileOut.println(s);
+
+                    // Comptage des mots
                     wordsCount++;
+
                     // Mots uniques
                     if(uniqueWords.contains(s) == false) {
                         uniqueWords.add(s);
@@ -182,80 +201,24 @@ public class BookStatistics {
             throw new BookStatisticsException("Le prétraitement du fichier '" + in + "' a échoué!", e);
         }
 
+        // Sauvegarde des résultats dans une hashmap pour faciliter le retour
         bookCounts.put("lines", linesCount);
         bookCounts.put("words", wordsCount);
         bookCounts.put("uniqueWords", new Long(uniqueWords.size()));
+
         return bookCounts;
     }
 
-/**    public static <Records> void convertBookToWordsV2(String in, String out) throws FileNotFoundException {
-        Pattern p = Pattern.compile("\\w+", Pattern.UNICODE_CHARACTER_CLASS);
-        Set<String> mots = new HashSet<String>();
-        HashMap<String, Integer> mapMots = new HashMap<String, Integer>();
-
-        NavigableMap<String, Integer> treemap = new TreeMap<String, Integer>(
-                Collections.reverseOrder());
-
-        SortedSet<Map.Entry<String, Integer>> sortedset = new TreeSet<Map.Entry<String, Integer>>(
-                new Comparator<Map.Entry<String, Integer>>() {
-                    @Override
-                    public int compare(Map.Entry<String, Integer> e1,
-                                       Map.Entry<String, Integer> e2) {
-                        return e2.getValue().compareTo(e1.getValue());
-                    }
-                });
-
-        try (Scanner sc = new Scanner(new File(in));
-             PrintStream fileOut = new PrintStream(new FileOutputStream(out))) {
-            for (int i = 0; sc.hasNextLine(); ++i) {
-                for (Matcher m1 = p.matcher(sc.nextLine()); m1.find(); ) {
-                    if (mapMots.containsKey(m1.group())) {
-                        mapMots.put(m1.group(), mapMots.get(m1.group() + 1));
-                        int v = treemap.get(m1.group());
-                        v++;
-                        treemap.put(m1.group(), v);
-                        //treemap.put(m1.group(), treemap.get(m1.group() + 1));
-                    } else {
-                        mapMots.put(m1.group(), 1);
-                        treemap.put(m1.group(), 1);
-                    }
-                    if (mots.contains(m1.group()) == false) {
-                        mots.add(m1.group());
-                        fileOut.println(m1.group());
-                    }
-                }
-            }
-        }
-
-        sortedset.addAll(treemap.entrySet());
-
-        //mapMots = MapUtil.sortMap(mapMots);
-        //System.out.println(sortedset);
-        //Set keys = sortedset.keySet();   // It will return you all the keys in Map in the form of the Set
-
-        int j = 0;
-        for (Iterator i = sortedset.iterator(); i.hasNext() && j < 50; ) {
-
-            Map.Entry<String, Integer> e = (Map.Entry<String, Integer>) i.next();
-            System.out.println(e.getKey() + " : " + e.getValue());
-            //int value =  0;//treemap.get(key);
-            //Records value = (Records) treemap.get(key); // Here is an Individual Record in your HashMap
-            //System.out.println(key + " : " + value);
-            //System.out.println(key.toString() + " : " + value.toString());
-            j++;
-        }
-    }
-*/
     /**
      * Construction de la table de hashage mots / utilisation
-     * @param preprocessedBookAbsoluteFilename
-     * @return
+     *
+     * @param preprocessedBookAbsoluteFilename : nom du fichier de mots à traiter
+     * @return : map mot / nombre d'utilisations
      * @throws FileNotFoundException
      */
     private HashMap<String, Integer> getBookWordUses(String preprocessedBookAbsoluteFilename) throws FileNotFoundException {
         HashMap<String, Integer> map = new HashMap<String, Integer>();
-        //Set<Map.Entry<String, Integer>> entries = map.entrySet();
-        ArrayList<Word> words = new ArrayList();
+        //ArrayList<Word> words = new ArrayList();
 
         // Lecture du livre prétraité pour dénombrer l'utilisation de chaque mot
         try (Scanner sc = new Scanner(new File(preprocessedBookAbsoluteFilename))) {
@@ -278,8 +241,8 @@ public class BookStatistics {
      * Supprime les éventuels fichiers de mots issus du lancement précédents dans le
      * le répertoire de prétraitement
      *
-     * @param preprocessDirectory
-     * @return
+     * @param preprocessDirectory : suppression des éventuels fichiers prétraités issus du lancement précédent
+     * @return : oui/non si l'action s'est bien déroulé
      */
     public boolean cleanPreprocessDirectory(String preprocessDirectory) {
         // Valeur par défaut
@@ -302,10 +265,10 @@ public class BookStatistics {
     }
 
     /**
-     * Retourne le nombre de lignes du fichier reçu (1)
+     * Retourne le nombre de lignes du fichier livre original
      *
-     * @param f
-     * @return
+     * @param f : chemin du livre à analyser
+     * @return  : nombre de ligne du livre
      */
     public int countBookLines(String f) {
         int lines = 0;
@@ -324,10 +287,10 @@ public class BookStatistics {
     }
 
     /**
-     * Retourne le nombre de mots du fichier (2)
+     * Retourne le nombre de mots du fichier de mots
      *
-     * @param f
-     * @return
+     * @param f : nom du fichier de mots à analyser
+     * @return : nombre de mots du livre
      */
     public int countBookWords(String f) {
         return countBookLines(preprocessedBooks.get(f));
@@ -335,6 +298,7 @@ public class BookStatistics {
 
     /**
      * Option 4.3 - Affiche les 50 mots les plus fréquents et leur nombre d'occurrences
+     *
      * @param book  : Livre à analyser
      * @param scope : Nombre de mots à analyser
      * @return      : Liste des n (scope) tuples (mot, fréquence)
@@ -364,9 +328,10 @@ public class BookStatistics {
     }
 
     /**
-     * Option 4.3 - Afficher les mots qui sont présents seulement dans ce fichier et aucun des autres fichiers
-     * @param book
-     * @return
+     * Option 4.4 - Afficher les mots qui sont présents seulement dans ce fichier et aucun des autres fichiers
+     *
+     * @param book : livre à analyser
+     * @return     : liste des mots présents seulement dans ce fichier et aucun des autres fichiers
      */
     public Set<String> getBookUniqueWordsInAllBooks(Book book) throws FileNotFoundException {
         Set<String> uniqueWords = new TreeSet<String>();
@@ -400,6 +365,13 @@ public class BookStatistics {
         return uniqueWords;
     }
 
+    /**
+     * Option 4.5 - Affiche pour chacun des autres fichiers le pourcentage de mots de l'autre fichier
+     * qui sont présents dans le fichier sélectionnés, par ordre décroissant de ce pourcentage.
+     *
+     * @param book : livre à analyser
+     * @return : map livre / % mots utilisés
+     */
     public List<WordUsed> getBooksWordUseInAllBooksV2(Book book){
         List<WordUsed> lWordsUsed = new ArrayList<WordUsed>();
 
@@ -429,65 +401,11 @@ public class BookStatistics {
         return lWordsUsed;
     }
 
-
-    /**
-     * Option 4.5 - Affiche pour chacun des autres fichiers le pourcentage de mots de l'autre fichier
-     * qui sont présents dans le fichier sélectionnés, par ordre décroissant de ce pourcentage.
-     * @param book
-     * @return
-     */
-    public List<WordUsed> getBooksWordUseInAllBooks(Book book) throws FileNotFoundException {
-        Set<String> uniqueWords = new TreeSet<String>();
-        Map<String, Long> wordsUse = new HashMap<String, Long>();
-        List<WordUsed> lWordsUsed = new ArrayList<WordUsed>();
-
-        // Etape 1 - Récupération des mots du livre courant
-        try (Scanner sc = new Scanner(new File(book.getPreprocessedBookAbsoluteFilename()))) {
-            for (int i = 0; sc.hasNextLine(); ++i) {
-                String s = sc.nextLine();
-                if(uniqueWords.contains(s) == false)
-                    uniqueWords.add(s);
-            }
-        }
-
-        // Etape 2 - Utilisation de ces mots dans les autres livres
-        for(Book b : books){
-            // Recherche de concordance des mots des autres livres avec ceux du livre courant
-            if(b.getPreprocessedBookAbsoluteFilename().compareTo(book.getPreprocessedBookAbsoluteFilename()) != 0){
-                try (Scanner sc = new Scanner(new File(b.getPreprocessedBookAbsoluteFilename()))) {
-                    long wordsUsed = 0;
-                    for (int j = 0; j < uniqueWords.size(); j++) {
-                        for (int i = 0; sc.hasNextLine(); ++i) {
-                            String s = sc.nextLine();
-                            // Si le mot existe dans un autre livre, on le retire du résultat
-                            if (uniqueWords.contains(s) == true){
-                                wordsUsed++;
-                            }
-                        }
-                    }
-                    wordsUse.put(b.getBookName(), wordsUsed);
-                }
-            }
-        }
-
-        // Etape 3 - Transformation des comptages de mots par fichier en pourcentage
-        for (Map.Entry<String, Long> e : wordsUse.entrySet()) {
-            String key    = e.getKey();
-            long value  = e.getValue();
-            float res = ( value / book.getUniqueWords() ) * 100;
-            lWordsUsed.add(new WordUsed(key, value, res));
-        }
-
-        // Tri des résultats par pourcentage décroissant d'utilisation
-        Collections.sort(lWordsUsed);
-
-        return lWordsUsed;
-    }
-
     /**
      * Récupère la liste des mots uniques d'un livre
-     * @param book
-     * @return
+     *
+     * @param book : livre à analyser
+     * @return : liste des mots uniques du livre
      * @throws FileNotFoundException
      */
     public ArrayList<String> getBookUniqueWords(Book book) throws FileNotFoundException {
@@ -505,6 +423,13 @@ public class BookStatistics {
         return uniqueWords;
     }
 
+    /**
+     * Méthode utilitaire honteusement pompée sur google pour arrondir un float
+     *
+     * @param value : valeur à arrondir
+     * @param scale : précision
+     * @return      : valeur arrrondie
+     */
     public static float round(float value, int scale) {
         int pow = 10;
         for (int i = 1; i < scale; i++) {
@@ -519,7 +444,5 @@ public class BookStatistics {
                         : (tmpSub >= -0.5f ? tmp : tmp - 1)
         ) ) ) / pow;
 
-        // Below will only handles +ve values
-        // return ( (float) ( (int) ((tmp - (int) tmp) >= 0.5f ? tmp + 1 : tmp) ) ) / pow;
     }
  }
