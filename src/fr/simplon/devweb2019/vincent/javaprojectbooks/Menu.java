@@ -1,3 +1,5 @@
+package fr.simplon.devweb2019.vincent.javaprojectbooks;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
@@ -13,6 +15,9 @@ public class Menu {
     static{
         sc = new Scanner(System.in);
     }
+
+    // Constante scope top mots les plus fréquents
+    public static final int TOP_SCOPE = 50;
 
     /**
      * Constructeur
@@ -187,7 +192,7 @@ public class Menu {
 
     /**
      * Option 2 - Ajoute un livre dans la bibliothèque
-     * @return : Nom du livre ajouté (TODO : retourner l'objet Book serait mieux)
+     * @return : Nom du livre ajouté (TODO : retourner l'objet fr.simplon.devweb2019.vincent.javaProjectBooks.Book serait mieux)
      */
     private String executeOptionAddBook(){
 
@@ -365,7 +370,8 @@ public class Menu {
                 }
 
                 // Pause
-                pause();
+                if(oneMore)
+                    pause();
             }
 
         } else {
@@ -433,7 +439,7 @@ public class Menu {
      */
     private void executeOptionBookWordsFrequency(Book book){
         System.out.println("\nListe des 50 mots les plus fréquents dans le livre courant ( ==> " + book.getBookName() + " )\n");
-        int scope = 50;
+        int scope = Menu.TOP_SCOPE;
         try {
             String s = "";
             // Extraction des n mots les plus utilisés

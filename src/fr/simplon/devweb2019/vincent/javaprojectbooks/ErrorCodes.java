@@ -1,3 +1,5 @@
+package fr.simplon.devweb2019.vincent.javaprojectbooks;
+
 /**
  * Liste énuméré des codes erreurs applicatifs
  */

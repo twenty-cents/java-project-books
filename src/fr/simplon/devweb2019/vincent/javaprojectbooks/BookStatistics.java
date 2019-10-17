@@ -1,5 +1,6 @@
+package fr.simplon.devweb2019.vincent.javaprojectbooks;
+
 import java.io.*;
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -218,7 +219,7 @@ public class BookStatistics {
      */
     private HashMap<String, Integer> getBookWordUses(String preprocessedBookAbsoluteFilename) throws FileNotFoundException {
         HashMap<String, Integer> map = new HashMap<String, Integer>();
-        //ArrayList<Word> words = new ArrayList();
+        //ArrayList<fr.simplon.devweb2019.vincent.javaProjectBooks.Word> words = new ArrayList();
 
         // Lecture du livre prétraité pour dénombrer l'utilisation de chaque mot
         try (Scanner sc = new Scanner(new File(preprocessedBookAbsoluteFilename))) {

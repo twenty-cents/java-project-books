@@ -1,3 +1,5 @@
+package fr.simplon.devweb2019.vincent.javaprojectbooks;
+
 public class WordUsed implements Comparable<WordUsed> {
 
     private String word = "";
