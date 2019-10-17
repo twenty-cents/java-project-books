@@ -37,8 +37,9 @@ public class Menu {
                 addBook(books[i]);
             }
 
-            // Pause utilisateur
-            pause();
+            // Pause utilisateur si au moins un livre a été importé
+            if(books.length > 0)
+                pause();
 
             // Pseudo Nettoyage du terminal
             clear();
@@ -180,6 +181,10 @@ public class Menu {
         // Message à caractère informatif
         addTitleOption("Option 1 : Lister les fichiers");
         System.out.println("Liste des livres présents dans la bibliothèque :\n");
+
+        // Message à caractère informatif si la bibliothèque ne contient aucun livre
+        if(bookStatistics.getBooks().size() == 0)
+            System.out.println("\n!!! Désolé, aucun livre disponible dans la bibliothèque !!!");
 
         // Récupération et affichage de la liste des livres
         for(Book book : bookStatistics.getBooks()){
@@ -375,7 +380,11 @@ public class Menu {
             }
 
         } else {
+            // Message à caractère informatif
             System.out.println("\n!!! Désolé, aucun livre à supprimer disponible !!!");
+
+            // Pause
+            pause();
         }
 
     }

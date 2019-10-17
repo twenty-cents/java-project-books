@@ -8,11 +8,28 @@
 <a id="execution_001"></a>
 
 # Exécution
-Le programme se lance par la classe *main* présente dans le package *fr.simplon.devweb2019.vincent.javaprojectbooks*.
+Le programme se lance par la classe *Main* présente dans le package *fr.simplon.devweb2019.vincent.javaprojectbooks*.
+
+
+**Installation :**
+
+Importer le projet dans l'IDE, et lancer la classe Main avec ou sans arguments.
+
+**Exemples de paramètres d'exécution :**
+
+- Avec trois livres correctements nommés : 
+
+    *"./books/Smith/Smith-Richesse_des_Nations_4.txt" "./books/Spinoza/Spinoza-Ethique.txt" "./books/Spinoza/Spinoza-Traite_Politique.txt"*
+
+- Avec trois livres dont un mal nommé : 
+    
+    *"./books/Smith/Smith-Richesse_des_Nations_4.txt" "./book/Spinoza/Spinoza-Ethique.txt" "./books/Spinoza/Spinoza-Traite_Politique.txt"*
+
 
 **Postulat de départ :**
 
 On considère que tous les livres de la bibliothèques sont stockés dans le répertoire /books ou l'un de ses sous-répertoires.
+
 
 <a id="fontions_001"></a>
 # Fonctionnalités
