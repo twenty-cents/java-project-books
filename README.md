@@ -10,7 +10,8 @@
 # Exécution
 Le programme se lance par la classe *main* présente dans le package *fr.simplon.devweb2019.vincent.javaprojectbooks*.
 
-*Postulat de départ :*
+**Postulat de départ :**
+
 On considère que tous les livres de la bibliothèques sont stockés dans le répertoire /books ou l'un de ses sous-répertoires.
 
 <a id="fontions_001"></a>
@@ -19,18 +20,18 @@ On considère que tous les livres de la bibliothèques sont stockés dans le ré
 A chaque lancement de l'application, les actions suivantes sont effectuées :
 - Contrôle des arguments reçus : les fichiers reçus doivent exister dans le système d'exploitation. Si un ou plusieurs fichiers n'ont pas été trouvé, l'application en affiche la liste pour en informer l'utilisateur, puis se ferme.
 
-- Suppression de tous les fichiers du répertoire */prepreocess* (Un prétraitrement est lancé à chaque ajout de nouveau livre, afin de stocker dans le répertoire */preprocess* la liste des mots au format un mot par ligne.
+- Suppression de tous les fichiers du répertoire */prepreocess* (un prétraitrement est lancé à chaque ajout de nouveau livre, afin de stocker dans le répertoire */preprocess* la liste des mots au format un mot par ligne.
   
 - Intégration des fichiers reçus : intégration des fichiers reçus dans la bilbiothèque par création d'un objet *Livre* pour chaque fichier reçu.
 
-    Ces derniers sont initialisé avec les données suivantes :
+    Ces derniers sont initialisés avec les données suivantes :
 
-    - Le nom du livre (nom du fichier)
-    - Le chemin absolu du livre dans l'espace de stockage
-    - Le chemin absolu de l'extraction des mots du livre dans l'espace de stockage
-    - Le nombre de lignes du livre
-    - Le nombre de mots du livre
-    - Le nombre de mots uniques du livre
+    - Le nom du livre (nom du fichier).
+    - Le chemin absolu du livre dans l'espace de stockage.
+    - Le chemin absolu de l'extraction des mots du livre dans l'espace de stockage.
+    - Le nombre de lignes du livre.
+    - Le nombre de mots du livre.
+    - Le nombre de mots uniques du livre.
     - Une table de hashage des couples mot / comptage utilisation pour chaque mot du livre.
 
 - Ouverture du menu général de l'application   
@@ -185,8 +186,8 @@ Affiche les mots qui sont présents seulement dans ce fichier et aucun des autre
 >  --------------------------------------------------------------------------------------------
 
 
-### 4.5 - Affiche pour chacun des autres fichiers le pourcentage de mots de l'autre fichier qui sont présents dans le fichier sélectionnés, par ordre décroissant de ce pourcentage.
-Affiche pour chacun des autres fichiers le pourcentage de mots de l'autre fichier qui sont présents dans le fichier sélectionnés, par ordre décroissant de ce pourcentage.
+### 4.5 - Affiche pour chacun des autres fichiers le pourcentage de mots de l'autre fichier qui sont présents dans le fichier sélectionné, par ordre décroissant de ce pourcentage.
+Affiche pour chacun des autres fichiers le pourcentage de mots **uniques** de l'autre fichier qui sont présents dans le fichier sélectionné, par ordre décroissant de ce pourcentage.
 
 **Exemple :**
 >  --------------------------------------------------------------------------------------------

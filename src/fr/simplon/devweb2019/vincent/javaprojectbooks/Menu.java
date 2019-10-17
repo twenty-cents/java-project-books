@@ -336,7 +336,7 @@ public class Menu {
                 addOption(2, "Affiche le nombre de mots du fichier");
                 addOption(3, "Affiche les 50 mots les plus fréquents et leur nombre d'occurrences");
                 addOption(4, "Affiche les mots qui sont présents seulement dans ce fichier et aucun des autres fichiers");
-                addOption(5, "Affiche pour chacun des autres fichiers le pourcentage de mots de l'autre fichier qui sont présents dans le fichier sélectionnés, par ordre décroissant de ce pourcentage.");
+                addOption(5, "Affiche pour chacun des autres fichiers le pourcentage de mots de l'autre fichier qui sont présents dans le fichier sélectionné, par ordre décroissant de ce pourcentage.");
                 addOption(6, "Affiche le nombre de mots unique du fichier\n");
                 addOption(7, "Retour au menu précédent");
 
