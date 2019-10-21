@@ -28,14 +28,14 @@ Importer le projet dans l'IDE, et lancer la classe Main avec ou sans arguments.
 
 **Postulat de départ :**
 
-On considère que tous les livres de la bibliothèques sont stockés dans le répertoire /books ou l'un de ses sous-répertoires.
+On considère que tous les livres de la bibliothèque sont stockés dans le répertoire /books ou l'un de ses sous-répertoires.
 
 
 <a id="fontions_001"></a>
 # Fonctionnalités
 ## Démarrage de l'application
 A chaque lancement de l'application, les actions suivantes sont effectuées :
-- Contrôle des arguments reçus : les fichiers reçus doivent exister dans le système d'exploitation. Si un ou plusieurs fichiers n'ont pas été trouvé, l'application en affiche la liste pour en informer l'utilisateur, puis se ferme.
+- Contrôle des arguments reçus : les fichiers reçus doivent exister dans le système d'exploitation. Si un ou plusieurs fichiers n'ont pas été trouvés, l'application en affiche la liste pour en informer l'utilisateur, puis se ferme.
 
 - Suppression de tous les fichiers du répertoire */prepreocess* (un prétraitrement est lancé à chaque ajout de nouveau livre, afin de stocker dans le répertoire */preprocess* la liste des mots au format un mot par ligne.
   
@@ -62,7 +62,7 @@ Le menu général présente les options suivantes :
 - (5) Quitter le programme 
 
 
-Pour gérer les transitions de menu, à défaut de ne pouvoir faire un *clear* de la console de sortie java, le développeur a décidé de simuler cette fonctionnalité en effectuant plusieurs *retour chariot* pour faire défiler la console de sortie et la "nettoyer".
+Pour gérer les transitions de menu, à défaut de ne pouvoir faire un *clear* de la console de sortie java, le développeur a décidé de simuler cette fonctionnalité en effectuant plusieurs *retour chariot* pour faire défiler la console de sortie et ainsi la "nettoyer".
 
 ### 1 - Lister les fichiers
 Affiche la liste des livres de la bibliothèque.
